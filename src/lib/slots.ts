@@ -16,6 +16,13 @@ interface Booking {
 
 const SLOT_DURATION_MS = 30 * 60 * 1000
 
+/**
+ * Returns available 30-min slots for `date`, excluding windows that overlap existing bookings.
+ *
+ * IMPORTANT: `date` must be constructed with a local-time component (e.g. `new Date(\`${dateParam}T00:00:00\`)`)
+ * to ensure getDay() and date extraction reflect the correct local calendar day.
+ * Do NOT pass a date-only ISO string (e.g. `new Date('2025-01-06')`) as it parses as UTC midnight.
+ */
 export function getAvailableSlots(
   windows: AvailabilityWindow[],
   bookings: Booking[],

@@ -1,4 +1,4 @@
-interface BookingEmailVars {
+export interface BookingEmailVars {
   providerName: string
   customerName: string
   customerEmail: string
