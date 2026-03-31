@@ -44,6 +44,10 @@ export function BookingFlow({ providerSlug, availableDaysOfWeek }: BookingFlowPr
       const res = await fetch(
         `/api/providers/${providerSlug}/slots?date=${selectedDate}`,
       )
+      if (!res.ok) {
+        setError('Failed to load available times. Please try again.')
+        return
+      }
       const data = await res.json()
       setSlots(data.slots ?? [])
       setStep(2)
@@ -89,7 +93,7 @@ export function BookingFlow({ providerSlug, availableDaysOfWeek }: BookingFlowPr
   }
 
   // Today's date as YYYY-MM-DD for min attribute
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('en-CA')
 
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm">
