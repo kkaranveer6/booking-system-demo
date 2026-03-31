@@ -22,6 +22,9 @@ export async function POST(req: NextRequest) {
   }
 
   const start = new Date(startsAt)
+  if (isNaN(start.getTime())) {
+    return NextResponse.json({ error: 'startsAt must be a valid ISO date string' }, { status: 400 })
+  }
   const end = new Date(start.getTime() + SLOT_DURATION_MS)
 
   const conflict = await db.booking.findFirst({

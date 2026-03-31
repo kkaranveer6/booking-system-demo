@@ -25,9 +25,8 @@ export async function GET(
     return NextResponse.json({ error: 'Provider not found' }, { status: 404 })
   }
 
-  const date = new Date(`${dateParam}T00:00:00`)
   const startOfDay = new Date(`${dateParam}T00:00:00`)
-  const endOfDay = new Date(`${dateParam}T23:59:59`)
+  const endOfDay = new Date(`${dateParam}T23:59:59.999`)
 
   const bookings = await db.booking.findMany({
     where: {
@@ -37,7 +36,7 @@ export async function GET(
     },
   })
 
-  const slots = getAvailableSlots(provider.availability, bookings, date)
+  const slots = getAvailableSlots(provider.availability, bookings, startOfDay)
 
   return NextResponse.json({
     slots: slots.map((s) => ({
