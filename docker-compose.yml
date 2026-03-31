@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: booking-system-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: booking_system
+      POSTGRES_USER: bsuser
+      POSTGRES_PASSWORD: bspassword
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
