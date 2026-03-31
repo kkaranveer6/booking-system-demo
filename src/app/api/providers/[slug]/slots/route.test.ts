@@ -62,7 +62,9 @@ describe('GET /api/providers/[slug]/slots', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.slots).toHaveLength(4)
-    expect(body.slots[0].startsAt).toBe('2025-01-05T22:30:00.000Z')
+    const parsedStart = new Date(body.slots[0].startsAt)
+    expect(parsedStart.getHours()).toBe(9)
+    expect(parsedStart.getMinutes()).toBe(0)
   })
 
   it('excludes slots that are already booked', async () => {

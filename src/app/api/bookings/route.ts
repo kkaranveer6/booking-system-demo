@@ -54,7 +54,9 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  const bookingUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/booking/${booking.id}`
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  if (!baseUrl) throw new Error('NEXT_PUBLIC_BASE_URL is not set')
+  const bookingUrl = `${baseUrl}/booking/${booking.id}`
   const dateTime = start.toLocaleString('en-US', {
     weekday: 'long',
     year: 'numeric',

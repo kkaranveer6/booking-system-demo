@@ -48,6 +48,7 @@ describe('POST /api/bookings', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockSendEmail.mockResolvedValue(undefined)
+    process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000'
   })
 
   it('returns 400 when required fields are missing', async () => {
