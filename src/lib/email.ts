@@ -16,6 +16,11 @@ function getResendClient(): Resend {
 }
 
 export async function sendEmail({ to, subject, body }: SendEmailParams): Promise<void> {
+  if (process.env.DISABLE_EMAIL === 'true') {
+    console.log(`[email disabled] to=${to} subject="${subject}"`)
+    return
+  }
+
   const from = process.env.RESEND_FROM_EMAIL
   if (!from) throw new Error('RESEND_FROM_EMAIL is not set')
 
