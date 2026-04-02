@@ -1,12 +1,10 @@
 import Link from 'next/link'
-import { db } from '@/lib/db'
+import providersData from '@/data/providers.json'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-export default async function HomePage() {
-  const providers = await db.provider.findMany({
-    orderBy: { name: 'asc' },
-  })
+export default function HomePage() {
+  const providers = [...providersData].sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <main className="min-h-screen bg-background">
