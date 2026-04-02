@@ -110,7 +110,7 @@ function ConfirmContent() {
 
 export default function ConfirmPage() {
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       <ConfirmContent />
     </Suspense>
   )
