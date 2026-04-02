@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { db } from '@/lib/db'
+import providersData from '@/data/providers.json'
 import { BookingFlow } from './BookingFlow'
+
+export function generateStaticParams() {
+  return providersData.map((p) => ({ slug: p.slug }))
+}
 
 export default async function ProviderPage({
   params,
@@ -9,17 +13,9 @@ export default async function ProviderPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-
-  const provider = await db.provider.findUnique({
-    where: { slug },
-    include: { availability: true },
-  })
+  const provider = providersData.find((p) => p.slug === slug)
 
   if (!provider) notFound()
-
-  const availableDaysOfWeek = [
-    ...new Set(provider.availability.map((w) => w.dayOfWeek)),
-  ].sort()
 
   return (
     <main className="min-h-screen bg-background">
@@ -38,7 +34,7 @@ export default async function ProviderPage({
 
         <BookingFlow
           providerSlug={provider.slug}
-          availableDaysOfWeek={availableDaysOfWeek}
+          availability={provider.availability}
         />
       </div>
     </main>
