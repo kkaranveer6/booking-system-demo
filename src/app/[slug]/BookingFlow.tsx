@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { getAvailableSlots } from '@/lib/slots'
+
+interface AvailabilityWindow {
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+}
 
 interface TimeSlot {
   startsAt: string
@@ -13,7 +20,7 @@ interface TimeSlot {
 
 interface BookingFlowProps {
   providerSlug: string
-  availableDaysOfWeek: number[]
+  availability: AvailabilityWindow[]
 }
 
 function formatTime(isoString: string): string {
@@ -23,76 +30,47 @@ function formatTime(isoString: string): string {
   })
 }
 
-export function BookingFlow({ providerSlug, availableDaysOfWeek }: BookingFlowProps) {
+export function BookingFlow({ providerSlug, availability }: BookingFlowProps) {
   const router = useRouter()
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [selectedDate, setSelectedDate] = useState('')
   const [slots, setSlots] = useState<TimeSlot[]>([])
-  const [loadingSlots, setLoadingSlots] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  async function handleFindSlots() {
+  const availableDaysOfWeek = [...new Set(availability.map((w) => w.dayOfWeek))].sort()
+
+  function handleFindSlots() {
     if (!selectedDate) return
-    setLoadingSlots(true)
-    setError(null)
-    try {
-      const res = await fetch(
-        `/api/providers/${providerSlug}/slots?date=${selectedDate}`,
-      )
-      if (!res.ok) {
-        setError('Failed to load available times. Please try again.')
-        return
-      }
-      const data = await res.json()
-      setSlots(data.slots ?? [])
-      setStep(2)
-    } catch {
-      setError('Failed to load available times. Please try again.')
-    } finally {
-      setLoadingSlots(false)
-    }
+    const date = new Date(`${selectedDate}T00:00:00`)
+    const rawSlots = getAvailableSlots(availability, [], date)
+    setSlots(
+      rawSlots.map((s) => ({
+        startsAt: s.startsAt.toISOString(),
+        endsAt: s.endsAt.toISOString(),
+      })),
+    )
+    setStep(2)
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!selectedSlot) return
     setSubmitting(true)
-    setError(null)
-    try {
-      const res = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          providerSlug,
-          startsAt: selectedSlot.startsAt,
-          customerName: name,
-          customerEmail: email,
-          notes: notes || undefined,
-        }),
-      })
-      if (res.status === 409) {
-        setError('This slot was just taken. Please go back and pick another time.')
-        return
-      }
-      if (!res.ok) {
-        setError('Something went wrong. Please try again.')
-        return
-      }
-      const { bookingId } = await res.json()
-      router.push(`/booking/${bookingId}`)
-    } catch {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setSubmitting(false)
-    }
+    const params = new URLSearchParams({
+      provider: providerSlug,
+      date: selectedDate,
+      time: selectedSlot.startsAt,
+      name,
+      email,
+      ...(notes ? { notes } : {}),
+    })
+    router.push(`/booking/confirm?${params}`)
   }
 
-  // Today's date as YYYY-MM-DD for min attribute
   const today = new Date().toLocaleDateString('en-CA')
 
   return (
@@ -114,20 +92,17 @@ export function BookingFlow({ providerSlug, availableDaysOfWeek }: BookingFlowPr
               <p className="text-xs text-muted-foreground">
                 Available on:{' '}
                 {availableDaysOfWeek
-                  .map((d) =>
-                    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d],
-                  )
+                  .map((d) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d])
                   .join(', ')}
               </p>
             )}
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
             onClick={handleFindSlots}
-            disabled={!selectedDate || loadingSlots}
+            disabled={!selectedDate}
             className="w-full"
           >
-            {loadingSlots ? 'Loading...' : 'Find available times'}
+            Find available times
           </Button>
         </div>
       )}
@@ -230,8 +205,6 @@ export function BookingFlow({ providerSlug, availableDaysOfWeek }: BookingFlowPr
               placeholder="Anything you'd like the provider to know"
             />
           </div>
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" disabled={submitting} className="w-full">
             {submitting ? 'Confirming...' : 'Confirm booking'}
