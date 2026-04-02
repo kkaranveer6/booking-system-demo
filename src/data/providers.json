@@ -1,0 +1,45 @@
+[
+  {
+    "id": "provider_jane-smith",
+    "name": "Jane Smith",
+    "slug": "jane-smith",
+    "bio": "Licensed therapist with 10 years of experience in cognitive behavioural therapy.",
+    "email": "jane@example.com",
+    "imageUrl": null,
+    "availability": [
+      { "dayOfWeek": 1, "startTime": "09:00", "endTime": "12:00" },
+      { "dayOfWeek": 2, "startTime": "09:00", "endTime": "12:00" },
+      { "dayOfWeek": 3, "startTime": "09:00", "endTime": "12:00" },
+      { "dayOfWeek": 4, "startTime": "09:00", "endTime": "12:00" },
+      { "dayOfWeek": 5, "startTime": "09:00", "endTime": "12:00" }
+    ]
+  },
+  {
+    "id": "provider_marcus-lee",
+    "name": "Marcus Lee",
+    "slug": "marcus-lee",
+    "bio": "Personal trainer specialising in strength and conditioning for all fitness levels.",
+    "email": "marcus@example.com",
+    "imageUrl": null,
+    "availability": [
+      { "dayOfWeek": 1, "startTime": "07:00", "endTime": "09:00" },
+      { "dayOfWeek": 1, "startTime": "17:00", "endTime": "19:00" },
+      { "dayOfWeek": 3, "startTime": "07:00", "endTime": "09:00" },
+      { "dayOfWeek": 3, "startTime": "17:00", "endTime": "19:00" },
+      { "dayOfWeek": 5, "startTime": "07:00", "endTime": "09:00" },
+      { "dayOfWeek": 5, "startTime": "17:00", "endTime": "19:00" }
+    ]
+  },
+  {
+    "id": "provider_sofia-reyes",
+    "name": "Sofia Reyes",
+    "slug": "sofia-reyes",
+    "bio": "Certified life coach helping professionals navigate career transitions and set goals.",
+    "email": "sofia@example.com",
+    "imageUrl": null,
+    "availability": [
+      { "dayOfWeek": 2, "startTime": "10:00", "endTime": "16:00" },
+      { "dayOfWeek": 4, "startTime": "10:00", "endTime": "16:00" }
+    ]
+  }
+]
