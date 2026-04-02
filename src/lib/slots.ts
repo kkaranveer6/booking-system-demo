@@ -3,7 +3,7 @@ export interface TimeSlot {
   endsAt: Date
 }
 
-interface AvailabilityWindow {
+export interface AvailabilityWindow {
   dayOfWeek: number
   startTime: string
   endTime: string

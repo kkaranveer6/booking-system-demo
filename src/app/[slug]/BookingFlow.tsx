@@ -5,13 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { getAvailableSlots } from '@/lib/slots'
-
-interface AvailabilityWindow {
-  dayOfWeek: number
-  startTime: string
-  endTime: string
-}
+import { getAvailableSlots, type AvailabilityWindow } from '@/lib/slots'
 
 interface TimeSlot {
   startsAt: string
@@ -60,15 +54,19 @@ export function BookingFlow({ providerSlug, availability }: BookingFlowProps) {
     e.preventDefault()
     if (!selectedSlot) return
     setSubmitting(true)
-    const params = new URLSearchParams({
-      provider: providerSlug,
-      date: selectedDate,
-      time: selectedSlot.startsAt,
-      name,
-      email,
-      ...(notes ? { notes } : {}),
-    })
-    router.push(`/booking/confirm?${params}`)
+    try {
+      const params = new URLSearchParams({
+        provider: providerSlug,
+        date: selectedDate,
+        time: selectedSlot.startsAt,
+        name,
+        email,
+        ...(notes ? { notes } : {}),
+      })
+      router.push(`/booking/confirm?${params}`)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const today = new Date().toLocaleDateString('en-CA')
