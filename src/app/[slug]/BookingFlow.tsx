@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -34,6 +34,11 @@ export function BookingFlow({ providerSlug, availability }: BookingFlowProps) {
   const [email, setEmail] = useState('')
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [today, setToday] = useState('')
+
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString('en-CA'))
+  }, [])
 
   const availableDaysOfWeek = [...new Set(availability.map((w) => w.dayOfWeek))].sort()
 
@@ -68,8 +73,6 @@ export function BookingFlow({ providerSlug, availability }: BookingFlowProps) {
       setSubmitting(false)
     }
   }
-
-  const today = new Date().toLocaleDateString('en-CA')
 
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -108,7 +111,7 @@ export function BookingFlow({ providerSlug, availability }: BookingFlowProps) {
       {/* Step 2: Pick a slot */}
       {step === 2 && (
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-start gap-2">
             <button
               onClick={() => setStep(1)}
               className="text-sm text-muted-foreground hover:text-foreground"
@@ -151,7 +154,7 @@ export function BookingFlow({ providerSlug, availability }: BookingFlowProps) {
       {/* Step 3: Enter details */}
       {step === 3 && selectedSlot && (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-start gap-2">
             <button
               type="button"
               onClick={() => setStep(2)}
