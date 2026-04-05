@@ -39,6 +39,7 @@ yarn-error.log*
 
 # superpowers
 .superpowers/
+docs/
 
 # typescript
 *.tsbuildinfo
